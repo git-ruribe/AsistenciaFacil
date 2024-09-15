@@ -3,148 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Asistencia</title>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>cheky.app - Próximamente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Global Styling */
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f4f8;
-            color: #333;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #1a1a1a;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('back.webp') no-repeat center center/cover;
+            filter: brightness(50%);
+            z-index: -1;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -1;
         }
 
         .container {
             text-align: center;
-            background: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
+            padding: 0 20px;
         }
 
         h1 {
-            font-size: 2rem;
-            color: #007bff;
+            font-size: 4rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
         }
 
-        #result {
+        p {
+            font-size: 1.5rem;
+            color: #ddd;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            padding: 15px 40px;
             font-size: 1.2rem;
-            color: #28a745;
-            margin: 20px 0;
-            min-height: 24px;
-        }
-
-        #qr-reader {
-            width: 100%;
-            height: auto;
-            margin: 20px 0;
-        }
-
-        #scan-again-button {
-            display: none;
-            background-color: #007bff;
-            color: white;
+            color: #fff;
+            background-color: #ff5722;
             border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
+            border-radius: 50px;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.6);
         }
 
-        #scan-again-button:hover {
-            background-color: #0056b3;
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #e64a19;
         }
 
-        /* Mobile responsiveness */
-        @media (max-width: 600px) {
+        .coming-soon {
+            font-size: 2rem;
+            margin-top: 30px;
+            color: #ff5722;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.9rem;
+            color: #bbb;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
             h1 {
-                font-size: 1.5rem;
+                font-size: 2.5rem;
             }
 
-            #scan-again-button {
-                font-size: 0.9rem;
-                padding: 8px 16px;
+            p {
+                font-size: 1.2rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 12px 30px;
+            }
+
+            .coming-soon {
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
 
+    <div class="background-image"></div>
+    <div class="overlay"></div>
+
     <div class="container">
-        <h1>Registro de Asistencia</h1>
-
-        <!-- Display scanned data here -->
-        <div id="result"></div>
-        
-        <!-- QR Code Reader -->
-        <div id="qr-reader"></div>
-
-        <!-- Hidden iframe to handle background submission -->
-        <iframe id="submission-frame" name="submission-frame" style="display:none;"></iframe>
-
-        <!-- Button to reset and scan another QR code -->
-        <button id="scan-again-button" onclick="resetScanner()">Escanear Otro Código</button>
+        <h1>cheky.app</h1>
+        <p>Próximamente la mejor plataforma para crear y gestionar todos tus checklists: asistencia, tareas, equipos y más. ¡Fácil y eficiente!</p>
+        <a href="#" class="btn">Notificarme cuando esté listo</a>
+        <div class="coming-soon">¡Lanzamiento muy pronto!</div>
     </div>
 
-    <script>
-        // QR Code Success Handler
-        function onScanSuccess(decodedText, decodedResult) {
-            // Stop scanning once QR code is successfully read
-            html5QrcodeScanner.clear();
-
-            // Show the decoded text to the user
-            document.getElementById('result').innerText = "Datos escaneados: " + decodedText;
-
-            // Build and submit a hidden form in the background via iframe
-            var form = document.createElement("form");
-            form.setAttribute("method", "POST");
-            form.setAttribute("action", "https://docs.google.com/forms/d/e/1FAIpQLSfuyisIl1UJ-n_NQB6PVCnW77-EziQpM5W9jvX2zRatYnBUFw/formResponse");
-            form.setAttribute("target", "submission-frame");
-
-            // Create hidden input field for the form data
-            var input = document.createElement("input");
-            input.setAttribute("type", "hidden");
-            input.setAttribute("name", "entry.635046751");  // Replace with your entry ID
-            input.setAttribute("value", decodedText);
-
-            // Append the input to the form
-            form.appendChild(input);
-
-            // Append form to the body, submit it, and then remove it
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-
-            // Display the scan again button
-            document.getElementById('scan-again-button').style.display = "block";
-        }
-
-        // Initialize the QR code scanner
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-reader", { fps: 10, qrbox: 250 });
-
-        html5QrcodeScanner.render(onScanSuccess);
-
-        // Reset the scanner to scan another QR code
-        function resetScanner() {
-            // Clear and reinitialize the scanner
-            html5QrcodeScanner.clear();
-            html5QrcodeScanner.render(onScanSuccess);
-
-            // Hide the scan again button and clear the result
-            document.getElementById('scan-again-button').style.display = "none";
-            document.getElementById('result').innerText = "";
-        }
-    </script>
+    <footer>
+        &copy; 2024 cheky.app. Todos los derechos reservados.
+    </footer>
 
 </body>
 </html>
