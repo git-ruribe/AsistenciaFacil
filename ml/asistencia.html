@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Asistencia</title>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        /* Global Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        #result {
+            font-size: 1.2rem;
+            color: #28a745;
+            margin: 20px 0;
+            min-height: 24px;
+        }
+
+        #qr-reader {
+            width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+
+        #scan-again-button {
+            display: none;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #scan-again-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            #scan-again-button {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Registro de Asistencia</h1>
+
+        <!-- Display scanned data here -->
+        <div id="result"></div>
+        
+        <!-- QR Code Reader -->
+        <div id="qr-reader"></div>
+
+        <!-- Hidden iframe to handle background submission -->
+        <iframe id="submission-frame" name="submission-frame" style="display:none;"></iframe>
+
+        <!-- Button to reset and scan another QR code -->
+        <button id="scan-again-button" onclick="resetScanner()">Escanear Otro Código</button>
+    </div>
+
+    <script>
+        // QR Code Success Handler
+        function onScanSuccess(decodedText, decodedResult) {
+            // Stop scanning once QR code is successfully read
+            html5QrcodeScanner.clear();
+
+            // Show the decoded text to the user
+            document.getElementById('result').innerText = "Datos escaneados: " + decodedText;
+
+            // Build and submit a hidden form in the background via iframe
+            var form = document.createElement("form");
+            form.setAttribute("method", "POST");
+            form.setAttribute("action", "https://docs.google.com/forms/d/e/1FAIpQLSfhOMZaFiy15WT_cRSOAn7qZirHfFAYs0Ow4_scD4bRKouBDg/formResponse");
+            form.setAttribute("target", "submission-frame");
+
+            // Split the string by the hyphen "-"
+            const parts =  decodedText.split('-');
+
+            // Assign the first part to 'Centro' and the second part to 'Nombre'
+            const Centro = parts[0];
+            const Nombre = parts[1];
+
+            // Create hidden input field for the form data
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "entry.1742675757");  // Replace with your entry ID
+            input.setAttribute("value", Centro);
+
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "entry.1376673400");  // Replace with your entry ID
+            input.setAttribute("value", Nombre);
+
+        // entry.1742675757
+        // entry.1376673400
+
+            // Append the input to the form
+            form.appendChild(input);
+
+            // Append form to the body, submit it, and then remove it
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+
+            // Display the scan again button
+            document.getElementById('scan-again-button').style.display = "block";
+        }
+
+        // Initialize the QR code scanner
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", { fps: 10, qrbox: 250 });
+
+        html5QrcodeScanner.render(onScanSuccess);
+
+        // Reset the scanner to scan another QR code
+        function resetScanner() {
+            // Clear and reinitialize the scanner
+            html5QrcodeScanner.clear();
+            html5QrcodeScanner.render(onScanSuccess);
+
+            // Hide the scan again button and clear the result
+            document.getElementById('scan-again-button').style.display = "none";
+            document.getElementById('result').innerText = "";
+        }
+    </script>
+
+</body>
+</html>
